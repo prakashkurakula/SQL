@@ -930,3 +930,802 @@ Understanding these commands is essential for database development, data analyti
 
 *Practice SQL every day to improve your database skills.*
 
+#SQL
+
+# 📘 SQL – DQL Operations (Data Query Language)
+## Complete Guide to SQL JOIN Operations
+
+![SQL](https://img.shields.io/badge/SQL-Database-blue)
+![Topic](https://img.shields.io/badge/Topic-DQL-green)
+![Language](https://img.shields.io/badge/Language-SQL-orange)
+![Level](https://img.shields.io/badge/Level-Beginner%20to%20Intermediate-brightgreen)
+
+---
+
+## 📌 1. Introduction to DQL
+
+**DQL (Data Query Language)** is a category of SQL used to retrieve data from database tables.
+
+It helps users fetch, filter, combine, and analyze information stored in databases.
+
+The primary DQL command is:
+
+- `SELECT`
+
+One of the most important concepts in DQL is **JOIN**.
+
+A JOIN is used to combine records from two or more tables based on a related column.
+
+### Why do we use JOIN operations?
+
+- To retrieve data from multiple tables.
+- To establish relationships between tables.
+- To combine related records.
+- To identify matching and non-matching records.
+- To analyze data from different departments.
+- To generate business reports.
+
+---
+
+## 📌 2. Database and Table Creation
+
+For this practical exercise, we use two tables:
+
+1. EMPLOYEE_DETAILS
+2. STUDENT_DETAILS
+
+### Step 1: Select Database
+
+```sql
+USE AMEZON;
+```
+
+**Explanation:**
+
+The `USE` statement selects the database in which SQL operations will be performed.
+
+### Step 2: Create Employee Details Table
+
+```sql
+CREATE TABLE EMPLOYEE_DETAILS
+(
+    EMPID INT,
+    EMPNAME CHAR(10),
+    EMP_AGE INT,
+    EMP_SALARY MONEY
+);
+```
+
+**Explanation:**
+
+| Column | Data Type | Description |
+|---|---|---|
+| EMPID | INT | Employee ID |
+| EMPNAME | CHAR(10) | Employee name |
+| EMP_AGE | INT | Employee age |
+| EMP_SALARY | MONEY | Employee salary |
+
+### Step 3: Create Student Details Table
+
+```sql
+CREATE TABLE STUDENT_DETAILS
+(
+    SUTID INT,
+    STUNAME CHAR(10),
+    STU_AGE INT,
+    STU_STAIPEND MONEY
+);
+```
+
+**Explanation:**
+
+| Column | Data Type | Description |
+|---|---|---|
+| SUTID | INT | Student ID |
+| STUNAME | CHAR(10) | Student name |
+| STU_AGE | INT | Student age |
+| STU_STAIPEND | MONEY | Student stipend |
+
+---
+
+## 📌 3. Insert Records into Tables
+
+### Insert Employee Records
+
+```sql
+INSERT INTO EMPLOYEE_DETAILS
+VALUES
+(1, 'JHON', 21, 1200),
+(2, 'STEVE', 25, 1500),
+(3, 'BRAD', 30, 2000),
+(4, 'HASSAN', 22, 3200),
+(5, 'PETER', 35, 4200),
+(6, 'WALTER', 29, 5000);
+```
+
+### Insert Student Records
+
+```sql
+INSERT INTO STUDENT_DETAILS
+VALUES
+(11, 'SAI', 22, 2000),
+(12, 'VAMSHI', 25, 2500),
+(13, 'MURARI', 30, 3000),
+(1, 'JHON', 21, 1200),
+(3, 'BRAD', 30, 2000),
+(15, 'PRAKASH', 21, 4000);
+```
+
+### Step 4: Display Records
+
+```sql
+SELECT * FROM EMPLOYEE_DETAILS;
+
+SELECT * FROM STUDENT_DETAILS;
+```
+
+**EMPLOYEE_DETAILS**
+
+| EMPID | EMPNAME | EMP_AGE | EMP_SALARY |
+|---|---|---|---|
+| 1 | JHON | 21 | 1200 |
+| 2 | STEVE | 25 | 1500 |
+| 3 | BRAD | 30 | 2000 |
+| 4 | HASSAN | 22 | 3200 |
+| 5 | PETER | 35 | 4200 |
+| 6 | WALTER | 29 | 5000 |
+
+**STUDENT_DETAILS**
+
+| SUTID | STUNAME | STU_AGE | STU_STAIPEND |
+|---|---|---|---|
+| 11 | SAI | 22 | 2000 |
+| 12 | VAMSHI | 25 | 2500 |
+| 13 | MURARI | 30 | 3000 |
+| 1 | JHON | 21 | 1200 |
+| 3 | BRAD | 30 | 2000 |
+| 15 | PRAKASH | 21 | 4000 |
+
+---
+
+# 📌 4. Types of SQL JOIN Operations
+
+The following JOIN operations are covered in this project:
+
+1. INNER JOIN
+2. LEFT OUTER JOIN
+3. RIGHT OUTER JOIN
+4. FULL OUTER JOIN
+5. CROSS JOIN
+6. EQUI JOIN
+7. NON-EQUI JOIN
+
+---
+
+## 4.1 INNER JOIN
+
+### Theory
+
+INNER JOIN retrieves only the matching records from both tables based on a specified condition.
+
+If a record does not have a matching value in the other table, it will not appear in the result.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1
+INNER JOIN table2
+ON table1.column_name = table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS
+INNER JOIN STUDENT_DETAILS
+ON EMPLOYEE_DETAILS.EMPID = STUDENT_DETAILS.SUTID;
+```
+
+### Explanation
+
+1. `SELECT *` retrieves all columns from both tables.
+2. `FROM EMPLOYEE_DETAILS` specifies the first table.
+3. `INNER JOIN STUDENT_DETAILS` combines the second table.
+4. `ON` specifies the matching condition.
+5. `EMPID = SUTID` matches employee IDs with student IDs.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMP_AGE | EMP_SALARY | SUTID | STUNAME | STU_AGE | STU_STAIPEND |
+|---|---|---|---|---|---|---|---|
+| 1 | JHON | 21 | 1200 | 1 | JHON | 21 | 1200 |
+| 3 | BRAD | 30 | 2000 | 3 | BRAD | 30 | 2000 |
+
+**Result:** 2 matching records.
+
+### Real-Time Scenario
+
+Imagine a company maintains employee details and student internship details in separate tables.
+
+The management wants to identify people whose IDs exist in both tables.
+
+INNER JOIN retrieves only those matching records.
+
+### Important Point
+
+INNER JOIN returns only matching records from both tables.
+
+---
+
+## 4.2 LEFT OUTER JOIN
+
+### Theory
+
+LEFT OUTER JOIN returns all records from the left table and only matching records from the right table.
+
+If a matching record does not exist in the right table, SQL returns NULL for the right table's columns.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1
+LEFT OUTER JOIN table2
+ON table1.column_name = table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS
+LEFT OUTER JOIN STUDENT_DETAILS
+ON EMPLOYEE_DETAILS.EMPID = STUDENT_DETAILS.SUTID;
+```
+
+### Expected Output
+
+| EMPID | EMPNAME | SUTID | STUNAME |
+|---|---|---|---|
+| 1 | JHON | 1 | JHON |
+| 2 | STEVE | NULL | NULL |
+| 3 | BRAD | 3 | BRAD |
+| 4 | HASSAN | NULL | NULL |
+| 5 | PETER | NULL | NULL |
+| 6 | WALTER | NULL | NULL |
+
+*Other columns from the original tables are omitted here for readability.*
+
+### Explanation
+
+- All six employee records are displayed.
+- JHON and BRAD have matching student records.
+- The remaining employees have no matching student IDs.
+- Therefore, student columns contain NULL for those employees.
+
+### Real-Time Scenario
+
+An HR department wants to display all employees, including employees who have not registered for an internal training program.
+
+LEFT JOIN is useful because it keeps every employee record, even when no matching training record exists.
+
+### Important Point
+
+LEFT JOIN = All records from the left table + matching records from the right table.
+
+---
+
+## 4.3 RIGHT OUTER JOIN
+
+### Theory
+
+RIGHT OUTER JOIN returns all records from the right table and only matching records from the left table.
+
+If no matching record exists in the left table, the left table columns contain NULL.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1
+RIGHT OUTER JOIN table2
+ON table1.column_name = table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS
+RIGHT OUTER JOIN STUDENT_DETAILS
+ON EMPLOYEE_DETAILS.EMPID = STUDENT_DETAILS.SUTID;
+```
+
+### Expected Output
+
+| EMPID | EMPNAME | SUTID | STUNAME |
+|---|---|---|---|
+| NULL | NULL | 11 | SAI |
+| NULL | NULL | 12 | VAMSHI |
+| NULL | NULL | 13 | MURARI |
+| 1 | JHON | 1 | JHON |
+| 3 | BRAD | 3 | BRAD |
+| NULL | NULL | 15 | PRAKASH |
+
+### Explanation
+
+- All six student records are displayed.
+- JHON and BRAD have matching employee records.
+- SAI, VAMSHI, MURARI, and PRAKASH do not have matching employee IDs.
+- Therefore, employee columns contain NULL for those records.
+
+### Real-Time Scenario
+
+A college wants to display all students, including students who have not yet been assigned an employee mentor.
+
+RIGHT JOIN ensures that every student record appears in the result.
+
+### Important Point
+
+RIGHT JOIN = All records from the right table + matching records from the left table.
+
+---
+
+## 4.4 FULL OUTER JOIN
+
+### Theory
+
+FULL OUTER JOIN retrieves all records from both tables.
+
+It includes:
+
+- Matching records from both tables.
+- Non-matching records from the left table.
+- Non-matching records from the right table.
+
+When a matching record does not exist, the corresponding columns contain NULL.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1
+FULL OUTER JOIN table2
+ON table1.column_name = table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS
+FULL OUTER JOIN STUDENT_DETAILS
+ON EMPLOYEE_DETAILS.EMPID = STUDENT_DETAILS.SUTID;
+```
+
+### Expected Output
+
+| EMPID | EMPNAME | SUTID | STUNAME |
+|---|---|---|---|
+| 1 | JHON | 1 | JHON |
+| 2 | STEVE | NULL | NULL |
+| 3 | BRAD | 3 | BRAD |
+| 4 | HASSAN | NULL | NULL |
+| 5 | PETER | NULL | NULL |
+| 6 | WALTER | NULL | NULL |
+| NULL | NULL | 11 | SAI |
+| NULL | NULL | 12 | VAMSHI |
+| NULL | NULL | 13 | MURARI |
+| NULL | NULL | 15 | PRAKASH |
+
+### Explanation
+
+- Two records match between the tables.
+- Four employee records have no matching student record.
+- Four student records have no matching employee record.
+- All ten records are included.
+
+### Real-Time Scenario
+
+A company wants to compare employee and student databases and identify all records, including matching and non-matching information.
+
+FULL OUTER JOIN is useful for comparing two complete datasets.
+
+### Important Point
+
+FULL OUTER JOIN = All records from both tables, whether matching or not.
+
+---
+
+## 4.5 CROSS JOIN
+
+### Theory
+
+CROSS JOIN returns the Cartesian product of two tables.
+
+It combines every record from the first table with every record from the second table.
+
+There is no ON condition in CROSS JOIN.
+
+**Syntax:**
+
+```sql
+SELECT *
+FROM table1
+CROSS JOIN table2;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS
+CROSS JOIN STUDENT_DETAILS;
+```
+
+### Expected Output Information
+
+The employee table contains 6 records.
+
+The student table contains 6 records.
+
+Therefore:
+
+```text
+Total Records = 6 × 6
+
+Total Records = 36
+```
+
+### Explanation
+
+Each employee record is combined with every student record.
+
+For example:
+
+| EMPNAME | STUNAME |
+|---|---|
+| JHON | SAI |
+| JHON | VAMSHI |
+| JHON | MURARI |
+| JHON | JHON |
+| JHON | BRAD |
+| JHON | PRAKASH |
+| STEVE | SAI |
+| STEVE | VAMSHI |
+
+The combinations continue until all 36 records are generated.
+
+### Real-Time Scenario
+
+An organization wants to generate every possible combination of employees and available training courses.
+
+CROSS JOIN can generate these combinations.
+
+### Important Point
+
+CROSS JOIN = Number of rows in Table 1 × Number of rows in Table 2.
+
+---
+
+## 4.6 EQUI JOIN
+
+### Theory
+
+EQUI JOIN is used to retrieve records from two tables by applying an equality condition between columns.
+
+It uses the `=` operator to compare related column values.
+
+EQUI JOIN is commonly written using the traditional comma-separated table syntax with a WHERE condition.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1, table2
+WHERE table1.column_name = table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS, STUDENT_DETAILS
+WHERE EMPLOYEE_DETAILS.EMPID = STUDENT_DETAILS.SUTID;
+```
+
+### Expected Output
+
+| EMPID | EMPNAME | SUTID | STUNAME |
+|---|---|---|---|
+| 1 | JHON | 1 | JHON |
+| 3 | BRAD | 3 | BRAD |
+
+### Explanation
+
+1. Both tables are specified using the FROM clause.
+2. The WHERE clause compares EMPID and SUTID.
+3. The equality operator identifies matching values.
+4. Only matching records are returned.
+
+### Real-Time Scenario
+
+A company wants to retrieve employees whose IDs match student registration IDs.
+
+EQUI JOIN helps retrieve matching records using an equality condition.
+
+### Important Point
+
+EQUI JOIN uses the equality operator (=).
+
+**Note:** This query produces the same matching rows as an INNER JOIN with the same equality condition.
+
+---
+
+## 4.7 NON-EQUI JOIN
+
+### Theory
+
+NON-EQUI JOIN combines records from two tables using comparison operators other than the equality operator.
+
+It can use operators such as:
+
+- Greater than (>)
+- Less than (<)
+- Greater than or equal to (>=)
+- Less than or equal to (<=)
+- BETWEEN
+
+Unlike EQUI JOIN, it does not require equal values between the joining columns.
+
+**Syntax:**
+
+```sql
+SELECT columns
+FROM table1, table2
+WHERE table1.column_name operator table2.column_name;
+```
+
+### SQL Query
+
+```sql
+SELECT *
+FROM EMPLOYEE_DETAILS, STUDENT_DETAILS
+WHERE EMPLOYEE_DETAILS.EMPID > STUDENT_DETAILS.SUTID;
+```
+
+### Explanation
+
+The query compares employee IDs with student IDs.
+
+It returns records where:
+
+```text
+EMPID > SUTID
+```
+
+For example:
+
+- Employee ID 2 is greater than Student ID 1.
+- Employee ID 3 is greater than Student ID 1.
+- Employee ID 4 is greater than Student ID 1 and 3.
+- Employee ID 5 is greater than Student ID 1 and 3.
+- Employee ID 6 is greater than Student ID 1 and 3.
+
+### Expected Output Information
+
+The query returns 8 combinations.
+
+| EMPID | EMPNAME | SUTID | STUNAME |
+|---|---|---|---|
+| 2 | STEVE | 1 | JHON |
+| 3 | BRAD | 1 | JHON |
+| 4 | HASSAN | 1 | JHON |
+| 5 | PETER | 1 | JHON |
+| 6 | WALTER | 1 | JHON |
+| 4 | HASSAN | 3 | BRAD |
+| 5 | PETER | 3 | BRAD |
+| 6 | WALTER | 3 | BRAD |
+
+### Real-Time Scenario
+
+Suppose a company wants to compare employee salary ranges with predefined salary grades.
+
+A NON-EQUI JOIN can be used to match salary values against ranges using greater-than, less-than, or BETWEEN conditions.
+
+### Important Point
+
+NON-EQUI JOIN uses comparison operators other than equality (=).
+
+---
+
+# 📌 5. Difference Between All JOIN Operations
+
+| JOIN Type | Description | Matching Records | Non-Matching Records |
+|---|---|---|---|
+| INNER JOIN | Returns matching records | Yes | No |
+| LEFT JOIN | All left records and matching right records | Yes | Left table retained |
+| RIGHT JOIN | All right records and matching left records | Yes | Right table retained |
+| FULL OUTER JOIN | All records from both tables | Yes | Yes |
+| CROSS JOIN | Cartesian product | No matching condition required | All combinations |
+| EQUI JOIN | Joins using equality | Yes | No |
+| NON-EQUI JOIN | Joins using inequality/comparison | Based on comparison | Depends on condition |
+
+---
+
+# 📌 6. Important Differences Between JOIN Operations
+
+### INNER JOIN vs LEFT JOIN
+
+| INNER JOIN | LEFT JOIN |
+|---|---|
+| Returns only matching records | Returns all left table records |
+| Excludes unmatched left records | Includes unmatched left records |
+| Excludes unmatched right records | Includes matching right records |
+| Uses ON condition | Uses ON condition |
+
+### LEFT JOIN vs RIGHT JOIN
+
+| LEFT JOIN | RIGHT JOIN |
+|---|---|
+| Preserves all left table records | Preserves all right table records |
+| Unmatched right values become NULL | Unmatched left values become NULL |
+
+### INNER JOIN vs FULL OUTER JOIN
+
+| INNER JOIN | FULL OUTER JOIN |
+|---|---|
+| Only matching records | Matching and non-matching records |
+| Excludes unmatched rows | Includes unmatched rows |
+| Smaller result in this example | Returns all 10 records |
+
+### EQUI JOIN vs NON-EQUI JOIN
+
+| EQUI JOIN | NON-EQUI JOIN |
+|---|---|
+| Uses equality (=) | Uses comparison operators |
+| Matches equal values | Matches based on a comparison condition |
+| Example: EMPID = SUTID | Example: EMPID > SUTID |
+
+---
+
+# 📌 7. Important SQL JOIN Interview Questions
+
+### Q1. What is a JOIN in SQL?
+
+A JOIN is used to combine records from two or more tables based on a related column.
+
+### Q2. How many types of JOIN operations are commonly used?
+
+The commonly discussed types include:
+
+1. INNER JOIN
+2. LEFT JOIN
+3. RIGHT JOIN
+4. FULL OUTER JOIN
+5. CROSS JOIN
+6. SELF JOIN
+
+EQUI JOIN and NON-EQUI JOIN describe joining conditions.
+
+### Q3. What is the difference between INNER JOIN and OUTER JOIN?
+
+INNER JOIN returns only matching records, whereas OUTER JOIN can also return non-matching records from one or both tables.
+
+### Q4. What is a Cartesian product?
+
+A Cartesian product combines every record from the first table with every record from the second table.
+
+### Q5. Which JOIN returns all records from both tables?
+
+FULL OUTER JOIN.
+
+### Q6. Which JOIN returns all records from the left table?
+
+LEFT OUTER JOIN.
+
+### Q7. Which JOIN returns all records from the right table?
+
+RIGHT OUTER JOIN.
+
+### Q8. What is the difference between EQUI JOIN and NON-EQUI JOIN?
+
+EQUI JOIN uses the equality operator, whereas NON-EQUI JOIN uses comparison operators such as >, <, >=, <=, or BETWEEN.
+
+### Q9. Can we join two tables without a common column?
+
+Yes. CROSS JOIN does not require a common column. Other JOIN operations can also use suitable conditions between columns.
+
+### Q10. What is the difference between JOIN and UNION?
+
+JOIN combines columns from related tables into one result, whereas UNION combines rows from SELECT query results.
+
+---
+
+# 📌 8. Practical SQL JOIN Exercises
+
+Use the EMPLOYEE_DETAILS and STUDENT_DETAILS tables to solve the following questions.
+
+### Beginner Level
+
+1. Display all employee records using SELECT.
+2. Display all student records using SELECT.
+3. Retrieve matching records using INNER JOIN.
+4. Retrieve all employee records using LEFT JOIN.
+5. Retrieve all student records using RIGHT JOIN.
+
+### Intermediate Level
+
+6. Display all matching and non-matching records using FULL OUTER JOIN.
+7. Generate all possible combinations using CROSS JOIN.
+8. Retrieve matching IDs using EQUI JOIN.
+9. Retrieve records where EMPID is greater than SUTID using NON-EQUI JOIN.
+10. Display only employee names and student names using INNER JOIN.
+
+### Advanced Level
+
+11. Find employees who do not have matching student records.
+12. Find students who do not have matching employee records.
+13. Find records that match in both tables.
+14. Compare the results of INNER JOIN and FULL OUTER JOIN.
+15. Calculate the number of records returned by each JOIN operation.
+
+---
+
+# 📌 9. Important Practical Notes
+
+1. SQL JOIN operations are useful for retrieving related information from multiple tables.
+2. The ON clause specifies the joining condition in explicit JOIN syntax.
+3. The WHERE clause can be used for filtering records and for writing traditional EQUI JOIN and NON-EQUI JOIN queries.
+4. NULL values appear when an outer JOIN has no matching record on one side.
+5. CROSS JOIN generates a Cartesian product.
+6. EQUI JOIN uses an equality condition.
+7. NON-EQUI JOIN uses a comparison condition.
+8. INNER JOIN and EQUI JOIN can produce the same results when they use the same equality condition.
+9. JOIN results can contain duplicate-looking rows if the joining columns have multiple matching records.
+10. Always check the joining columns and their relationships before writing a JOIN query.
+
+---
+
+# 📌 10. Conclusion
+
+DQL is an important part of SQL because it allows users to retrieve and analyze information stored in databases.
+
+JOIN operations are especially important when working with multiple related tables.
+
+By understanding INNER JOIN, LEFT JOIN, RIGHT JOIN, FULL OUTER JOIN, CROSS JOIN, EQUI JOIN, and NON-EQUI JOIN, developers and data analysts can retrieve meaningful information from different datasets.
+
+These concepts are widely used in:
+
+- SQL Development
+- Data Analysis
+- Database Management
+- Business Intelligence
+- Data Engineering
+- Reporting and Data Visualization
+
+**Learning SQL JOIN operations is an essential step toward becoming a SQL Developer or Data Analyst.**
+
+---
+
+# 📚 11. Learning Resources
+
+- [Microsoft SQL Server Documentation](https://learn.microsoft.com/en-us/sql/)
+- [W3Schools SQL JOIN Tutorial](https://www.w3schools.com/sql/sql_join.asp)
+- [SQLBolt Interactive Lessons](https://sqlbolt.com/)
+- [HackerRank SQL Practice](https://www.hackerrank.com/domains/sql)
+- [LeetCode Database Problems](https://leetcode.com/problemset/database/)
+
+---
+
+⭐ If you find this SQL JOIN guide useful, consider giving this repository a star!
+
+**Author:** Prakash
+
+**Technology:** SQL Server
+
+**Topic:** DQL – Data Query Language
+
+**Subtopic:** SQL JOIN Operations
