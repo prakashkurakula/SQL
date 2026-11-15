@@ -2595,3 +2595,879 @@ Learning these concepts with practical examples helps build strong SQL fundament
 **Technologies Used:** MySQL  
 **Topics Covered:** AUTO_INCREMENT, UNION, UNION ALL, INTERSECT, EXCEPT  
 **Level:** Beginner to Intermediate
+
+#SQL
+
+# SQL PRIMARY KEY AND FOREIGN KEY OPERATIONS
+
+## 📌 Introduction
+
+In SQL, **Primary Key** and **Foreign Key** are important constraints used to maintain data accuracy, consistency, and relationships between tables.
+
+These constraints help us avoid duplicate records, maintain unique identification, and establish relationships between multiple tables.
+
+### Topics Covered
+
+1. Introduction to Primary Key
+2. Introduction to Foreign Key
+3. Difference Between Primary Key and Foreign Key
+4. Parent Table and Child Table
+5. Creating Tables Using Primary Key and Foreign Key
+6. INSERT Operations
+7. UPDATE Operations
+8. DELETE Operations
+9. ON UPDATE CASCADE
+10. ON DELETE CASCADE
+11. DROP TABLE Operations
+12. Scenario-Based Examples
+13. Real-Time Applications
+
+---
+
+# 1. PRIMARY KEY
+
+## Definition
+
+A **Primary Key** is a constraint used to uniquely identify each record in a table.
+
+A Primary Key does not allow duplicate values or NULL values.
+
+Every table can have only one Primary Key constraint, but that key can contain multiple columns (Composite Primary Key).
+
+### Important Rules of Primary Key
+
+- It does not allow duplicate values.
+- It does not allow NULL values.
+- Each record must have a unique identification.
+- A table can have only one Primary Key constraint.
+- It can contain one or multiple columns.
+- It is used to identify individual records.
+
+### Syntax
+
+```sql
+CREATE TABLE TABLE_NAME
+(
+    COLUMN_NAME DATATYPE PRIMARY KEY,
+    COLUMN2 DATATYPE,
+    COLUMN3 DATATYPE
+);
+```
+
+### Example
+
+```sql
+CREATE TABLE EMPLOYEE
+(
+    EMP_ID INT PRIMARY KEY,
+    EMP_NAME VARCHAR(50),
+    EMP_SALARY INT
+);
+```
+
+### Explanation
+
+- `EMPLOYEE` – Table name.
+- `EMP_ID` – Column used as the Primary Key.
+- `INT` – Integer data type.
+- `PRIMARY KEY` – Ensures unique and non-NULL values.
+- `EMP_NAME` – Stores employee names.
+- `EMP_SALARY` – Stores employee salaries.
+
+### INSERT Operation
+
+```sql
+INSERT INTO EMPLOYEE VALUES (1, 'JOHN', 25000);
+
+INSERT INTO EMPLOYEE VALUES (2, 'PETER', 30000);
+
+INSERT INTO EMPLOYEE VALUES (3, 'STEVE', 35000);
+```
+
+### Display Records
+
+```sql
+SELECT * FROM EMPLOYEE;
+```
+
+### Output
+
+| EMP_ID | EMP_NAME | EMP_SALARY |
+|---|---|---:|
+| 1 | JOHN | 25000 |
+| 2 | PETER | 30000 |
+| 3 | STEVE | 35000 |
+
+### Duplicate Value Example
+
+```sql
+INSERT INTO EMPLOYEE VALUES (1, 'BRAD', 40000);
+```
+
+**Result:** Error because EMP_ID = 1 already exists.
+
+### NULL Value Example
+
+```sql
+INSERT INTO EMPLOYEE VALUES (NULL, 'SMITH', 45000);
+```
+
+**Result:** Error because a Primary Key cannot contain NULL values.
+
+---
+
+# 2. FOREIGN KEY
+
+## Definition
+
+A **Foreign Key** is a constraint used to establish a relationship between two tables.
+
+It is a column or group of columns in one table that references a Primary Key or another eligible unique key in a different table.
+
+The table containing the Primary Key is called the **Parent Table**.
+
+The table containing the Foreign Key is called the **Child Table**.
+
+### Important Rules of Foreign Key
+
+- It establishes relationships between two tables.
+- It references a Primary Key or eligible UNIQUE key.
+- It can contain duplicate values.
+- It can contain NULL values unless NOT NULL is specified.
+- A table can have multiple Foreign Keys.
+- It maintains referential integrity.
+- A Foreign Key value must match a referenced key value unless it is NULL.
+
+### Syntax
+
+```sql
+CREATE TABLE CHILD_TABLE
+(
+    COLUMN1 DATATYPE,
+    COLUMN2 DATATYPE,
+    FOREIGN_KEY_COLUMN DATATYPE,
+
+    FOREIGN KEY (FOREIGN_KEY_COLUMN)
+    REFERENCES PARENT_TABLE (PRIMARY_KEY_COLUMN)
+);
+```
+
+### Example
+
+```sql
+CREATE TABLE DEPARTMENT
+(
+    DEPT_ID INT PRIMARY KEY,
+    DEPT_NAME VARCHAR(50)
+);
+```
+
+```sql
+CREATE TABLE EMPLOYEE
+(
+    EMP_ID INT PRIMARY KEY,
+    EMP_NAME VARCHAR(50),
+    DEPT_ID INT,
+
+    FOREIGN KEY (DEPT_ID)
+    REFERENCES DEPARTMENT (DEPT_ID)
+);
+```
+
+### Explanation
+
+- `DEPARTMENT` is the Parent Table.
+- `EMPLOYEE` is the Child Table.
+- `DEPT_ID` in the Department table is the Primary Key.
+- `DEPT_ID` in the Employee table is the Foreign Key.
+- The Foreign Key connects employees with their departments.
+
+---
+
+# 3. DIFFERENCE BETWEEN PRIMARY KEY AND FOREIGN KEY
+
+| Primary Key | Foreign Key |
+|---|---|
+| Uniquely identifies each record. | Establishes relationships between tables. |
+| Does not allow duplicate values. | Allows duplicate values. |
+| Does not allow NULL values. | Allows NULL values unless restricted. |
+| Only one Primary Key constraint per table. | Multiple Foreign Key constraints are allowed. |
+| Used to identify records. | Used to connect tables. |
+| Defined in the parent table for a relationship. | Defined in the child table. |
+
+---
+
+# 4. PARENT TABLE AND CHILD TABLE
+
+## Parent Table
+
+A Parent Table is a table containing the referenced Primary Key or eligible unique key.
+
+Example:
+
+```sql
+CREATE TABLE EMPLOYEE_JOB_DETAILS
+(
+    ID INT PRIMARY KEY,
+    EMP_NAME CHAR(10),
+    EMP_SALARY MONEY
+);
+```
+
+## Child Table
+
+A Child Table contains a Foreign Key that references the Parent Table.
+
+Example:
+
+```sql
+CREATE TABLE EMPLOYEE_PERSONAL_DETAILS
+(
+    EMP_LOC CHAR(10),
+    EMP_COMPANY VARCHAR(10),
+    EMP_AGE TINYINT,
+    ID INT,
+
+    FOREIGN KEY (ID)
+    REFERENCES EMPLOYEE_JOB_DETAILS (ID)
+);
+```
+
+### Table Relationship
+
+```text
+PARENT TABLE
+EMPLOYEE_JOB_DETAILS
+--------------------
+ID (PRIMARY KEY)
+EMP_NAME
+EMP_SALARY
+       |
+       | Relationship
+       |
+       V
+CHILD TABLE
+EMPLOYEE_PERSONAL_DETAILS
+-------------------------
+EMP_LOC
+EMP_COMPANY
+EMP_AGE
+ID (FOREIGN KEY)
+```
+
+---
+
+# 5. PRACTICAL IMPLEMENTATION
+
+## Step 1: Create Parent Table
+
+```sql
+CREATE TABLE EMPLOYEE_JOB_DETAILS
+(
+    ID INT PRIMARY KEY,
+    EMP_NAME CHAR(10),
+    EMP_SALARY MONEY
+);
+```
+
+## Step 2: Create Child Table
+
+```sql
+CREATE TABLE EMPLOYEE_PERSONAL_DETAILS
+(
+    EMP_LOC CHAR(10),
+    EMP_COMPANY VARCHAR(10),
+    EMP_AGE TINYINT,
+    ID INT,
+
+    FOREIGN KEY (ID)
+    REFERENCES EMPLOYEE_JOB_DETAILS (ID)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+```
+
+### Explanation
+
+- `ON UPDATE CASCADE` automatically updates matching Foreign Key values when the referenced Parent Key changes.
+- `ON DELETE CASCADE` automatically deletes related Child Table records when the referenced Parent Table record is deleted.
+
+---
+
+# 6. INSERT OPERATIONS
+
+## Definition
+
+INSERT is used to add new records into a table.
+
+### Syntax
+
+```sql
+INSERT INTO TABLE_NAME
+VALUES (VALUE1, VALUE2, VALUE3);
+```
+
+## Insert Data into Parent Table
+
+```sql
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (1, 'JOHN', 1200);
+
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (2, 'PETER', 1400);
+
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (3, 'STEVE', 1600);
+
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (4, 'BRAD', 1800);
+
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (5, 'SMITH', 2000);
+```
+
+## Display Parent Table
+
+```sql
+SELECT * FROM EMPLOYEE_JOB_DETAILS;
+```
+
+## Insert Data into Child Table
+
+```sql
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('USA', 'GOOGLE', 21, 1);
+
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('UK', 'MSFT', 24, 2);
+
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('PARIS', 'META', 26, 3);
+
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('CANADA', 'IBM', 32, 4);
+
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('INDIA', 'WIPRO', 34, 5);
+```
+
+## Display Child Table
+
+```sql
+SELECT * FROM EMPLOYEE_PERSONAL_DETAILS;
+```
+
+### Important Note
+
+Always insert the Parent Table record before inserting a Child Table record that references it.
+
+### Invalid INSERT Example
+
+```sql
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('HYD', 'DELOITTE', 38, 6);
+```
+
+**Result:** Error because ID = 6 does not exist in the Parent Table.
+
+### Correct INSERT Example
+
+```sql
+INSERT INTO EMPLOYEE_JOB_DETAILS
+VALUES (6, 'SRINU', 18000);
+
+INSERT INTO EMPLOYEE_PERSONAL_DETAILS
+VALUES ('HYD', 'DELOITTE', 38, 6);
+```
+
+**Result:** Both records are inserted successfully.
+
+---
+
+# 7. UPDATE OPERATIONS
+
+## Definition
+
+UPDATE is used to modify existing records in a table.
+
+### Syntax
+
+```sql
+UPDATE TABLE_NAME
+SET COLUMN_NAME = VALUE
+WHERE CONDITION;
+```
+
+## Example 1: Update Primary Key
+
+```sql
+UPDATE EMPLOYEE_JOB_DETAILS
+SET ID = 50
+WHERE ID = 5;
+```
+
+**Explanation:**
+
+The Primary Key value changes from 5 to 50.
+
+Because `ON UPDATE CASCADE` is defined, the corresponding Foreign Key value in the Child Table is also automatically updated.
+
+## Example 2: Update Employee Name
+
+```sql
+UPDATE EMPLOYEE_JOB_DETAILS
+SET EMP_NAME = 'KIRAN'
+WHERE EMP_NAME = 'STEVE';
+```
+
+**Explanation:**
+
+Changes the employee name from STEVE to KIRAN.
+
+## Example 3: Update Employee Age
+
+```sql
+UPDATE EMPLOYEE_PERSONAL_DETAILS
+SET EMP_AGE = 40
+WHERE EMP_AGE = 21;
+```
+
+**Explanation:**
+
+Changes the employee age from 21 to 40.
+
+## Example 4: Update Foreign Key
+
+```sql
+UPDATE EMPLOYEE_PERSONAL_DETAILS
+SET ID = 5
+WHERE ID = 4;
+```
+
+**Explanation:**
+
+Changes the Foreign Key value from 4 to 5.
+
+This operation is successful only if ID = 5 exists in the Parent Table.
+
+### Important Note
+
+A Foreign Key cannot reference a non-existing Parent Key.
+
+---
+
+# 8. DELETE OPERATIONS
+
+## Definition
+
+DELETE is used to remove records from a table.
+
+### Syntax
+
+```sql
+DELETE FROM TABLE_NAME
+WHERE CONDITION;
+```
+
+## Example 1: Delete Parent Table Record
+
+```sql
+DELETE FROM EMPLOYEE_JOB_DETAILS
+WHERE ID = 3;
+```
+
+**Explanation:**
+
+Deletes the employee record with ID = 3.
+
+Since `ON DELETE CASCADE` is enabled, the related Child Table record is also automatically deleted.
+
+## Example 2: Delete Child Table Record
+
+```sql
+DELETE FROM EMPLOYEE_PERSONAL_DETAILS
+WHERE ID = 6;
+```
+
+**Explanation:**
+
+Deletes only the matching record from the Child Table.
+
+The Parent Table record remains unchanged.
+
+### Important Note
+
+Without ON DELETE CASCADE, deleting a Parent Table record that is referenced by a Child Table record is normally rejected.
+
+---
+
+# 9. ON UPDATE CASCADE
+
+## Definition
+
+ON UPDATE CASCADE is a Foreign Key action that automatically updates the corresponding Foreign Key values in the Child Table whenever the referenced Parent Key value is updated.
+
+### Syntax
+
+```sql
+FOREIGN KEY (CHILD_COLUMN)
+REFERENCES PARENT_TABLE (PARENT_COLUMN)
+ON UPDATE CASCADE;
+```
+
+### Example
+
+```sql
+UPDATE EMPLOYEE_JOB_DETAILS
+SET ID = 50
+WHERE ID = 5;
+```
+
+### Before Update
+
+Parent Table:
+
+| ID | EMP_NAME |
+|---:|---|
+| 5 | SMITH |
+
+Child Table:
+
+| EMP_LOC | ID |
+|---|---:|
+| INDIA | 5 |
+
+### After Update
+
+Parent Table:
+
+| ID | EMP_NAME |
+|---:|---|
+| 50 | SMITH |
+
+Child Table:
+
+| EMP_LOC | ID |
+|---|---:|
+| INDIA | 50 |
+
+**Result:** The Child Table Foreign Key is automatically updated.
+
+---
+
+# 10. ON DELETE CASCADE
+
+## Definition
+
+ON DELETE CASCADE automatically deletes related records from the Child Table when the corresponding record is deleted from the Parent Table.
+
+### Syntax
+
+```sql
+FOREIGN KEY (CHILD_COLUMN)
+REFERENCES PARENT_TABLE (PARENT_COLUMN)
+ON DELETE CASCADE;
+```
+
+### Example
+
+```sql
+DELETE FROM EMPLOYEE_JOB_DETAILS
+WHERE ID = 3;
+```
+
+### Before Delete
+
+Parent Table:
+
+| ID | EMP_NAME |
+|---:|---|
+| 3 | STEVE |
+
+Child Table:
+
+| EMP_LOC | ID |
+|---|---:|
+| PARIS | 3 |
+
+### After Delete
+
+Parent Table:
+
+| ID | EMP_NAME |
+|---|---|
+| Record deleted | |
+
+Child Table:
+
+| EMP_LOC | ID |
+|---|---|
+| Related record deleted | |
+
+**Result:** Both related records are deleted automatically.
+
+---
+
+# 11. DROP TABLE OPERATIONS
+
+## Definition
+
+DROP TABLE is used to permanently remove a table and its structure from the database.
+
+### Syntax
+
+```sql
+DROP TABLE TABLE_NAME;
+```
+
+### Example
+
+```sql
+DROP TABLE EMPLOYEE_PERSONAL_DETAILS;
+```
+
+```sql
+DROP TABLE EMPLOYEE_JOB_DETAILS;
+```
+
+### Important Note
+
+- Drop the Child Table before the Parent Table when a Foreign Key relationship exists.
+- DROP removes the table structure and its data.
+- Be careful while executing DROP operations.
+
+---
+
+# 12. SCENARIO-BASED EXAMPLES
+
+## Scenario 1: Student and College Relationship
+
+**Requirement:**
+
+A college maintains student details. Each student belongs to a college.
+
+### Parent Table
+
+```sql
+CREATE TABLE COLLEGE
+(
+    COLLEGE_ID INT PRIMARY KEY,
+    COLLEGE_NAME VARCHAR(50)
+);
+```
+
+### Child Table
+
+```sql
+CREATE TABLE STUDENT
+(
+    STUDENT_ID INT PRIMARY KEY,
+    STUDENT_NAME VARCHAR(50),
+    COLLEGE_ID INT,
+
+    FOREIGN KEY (COLLEGE_ID)
+    REFERENCES COLLEGE (COLLEGE_ID)
+);
+```
+
+### Insert Records
+
+```sql
+INSERT INTO COLLEGE
+VALUES (101, 'ABC COLLEGE');
+
+INSERT INTO STUDENT
+VALUES (1, 'RAHUL', 101);
+```
+
+**Explanation:** Student Rahul belongs to ABC College.
+
+## Scenario 2: Customer and Orders Relationship
+
+**Requirement:**
+
+A company stores customer information and their orders.
+
+```sql
+CREATE TABLE CUSTOMER
+(
+    CUSTOMER_ID INT PRIMARY KEY,
+    CUSTOMER_NAME VARCHAR(50)
+);
+```
+
+```sql
+CREATE TABLE ORDERS
+(
+    ORDER_ID INT PRIMARY KEY,
+    ORDER_AMOUNT INT,
+    CUSTOMER_ID INT,
+
+    FOREIGN KEY (CUSTOMER_ID)
+    REFERENCES CUSTOMER (CUSTOMER_ID)
+);
+```
+
+### Insert Records
+
+```sql
+INSERT INTO CUSTOMER
+VALUES (1, 'PRAKASH');
+
+INSERT INTO ORDERS
+VALUES (1001, 5000, 1);
+
+INSERT INTO ORDERS
+VALUES (1002, 7000, 1);
+```
+
+**Explanation:** One customer can place multiple orders. Therefore, the same CUSTOMER_ID can appear multiple times in the Orders table.
+
+## Scenario 3: Employee and Department Relationship
+
+**Requirement:**
+
+An organization maintains employee and department information.
+
+```sql
+CREATE TABLE DEPARTMENT
+(
+    DEPT_ID INT PRIMARY KEY,
+    DEPT_NAME VARCHAR(50)
+);
+```
+
+```sql
+CREATE TABLE EMPLOYEE
+(
+    EMP_ID INT PRIMARY KEY,
+    EMP_NAME VARCHAR(50),
+    DEPT_ID INT,
+
+    FOREIGN KEY (DEPT_ID)
+    REFERENCES DEPARTMENT (DEPT_ID)
+    ON DELETE CASCADE
+);
+```
+
+### Insert Records
+
+```sql
+INSERT INTO DEPARTMENT
+VALUES (10, 'IT');
+
+INSERT INTO EMPLOYEE
+VALUES (1, 'KIRAN', 10);
+
+INSERT INTO EMPLOYEE
+VALUES (2, 'RAJ', 10);
+```
+
+### Delete Operation
+
+```sql
+DELETE FROM DEPARTMENT
+WHERE DEPT_ID = 10;
+```
+
+**Explanation:** Both employee records are automatically deleted because ON DELETE CASCADE is enabled.
+
+---
+
+# 13. REAL-TIME APPLICATIONS
+
+Primary Key and Foreign Key constraints are used in many real-world applications.
+
+| Application | Parent Table | Child Table |
+|---|---|---|
+| Banking System | CUSTOMER | ACCOUNT |
+| E-Commerce | CUSTOMER | ORDERS |
+| College Management | COLLEGE | STUDENT |
+| Hospital Management | DOCTOR | APPOINTMENT |
+| Employee Management | DEPARTMENT | EMPLOYEE |
+| Library Management | BOOK | BOOK_ISSUE |
+
+### Why Do Companies Use Primary Key and Foreign Key?
+
+1. To maintain data accuracy.
+2. To avoid duplicate records.
+3. To establish relationships between tables.
+4. To maintain referential integrity.
+5. To manage related records efficiently.
+6. To reduce inconsistent data.
+
+---
+
+# 14. INTERVIEW QUESTIONS AND ANSWERS
+
+### Q1. What is a Primary Key?
+
+**Answer:** A Primary Key is a constraint that uniquely identifies each record in a table. It does not allow duplicate or NULL values.
+
+### Q2. What is a Foreign Key?
+
+**Answer:** A Foreign Key is a constraint used to establish a relationship between two tables by referencing a Primary Key or eligible UNIQUE key.
+
+### Q3. Can a Foreign Key contain duplicate values?
+
+**Answer:** Yes. A Foreign Key can contain duplicate values because multiple child records can reference the same parent record.
+
+### Q4. Can a Foreign Key contain NULL values?
+
+**Answer:** Yes. A Foreign Key can contain NULL values unless the column is defined with a NOT NULL constraint.
+
+### Q5. What is a Parent Table?
+
+**Answer:** A Parent Table is a table containing the key referenced by the Foreign Key in another table.
+
+### Q6. What is a Child Table?
+
+**Answer:** A Child Table is a table containing a Foreign Key that references the Parent Table.
+
+### Q7. What is ON DELETE CASCADE?
+
+**Answer:** ON DELETE CASCADE automatically deletes matching Child Table records when the corresponding Parent Table record is deleted.
+
+### Q8. What is ON UPDATE CASCADE?
+
+**Answer:** ON UPDATE CASCADE automatically updates the matching Foreign Key values when the referenced Parent Key value is updated.
+
+### Q9. Can we create multiple Foreign Keys in one table?
+
+**Answer:** Yes. A table can contain multiple Foreign Key constraints.
+
+### Q10. What happens if we insert an invalid Foreign Key value?
+
+**Answer:** SQL Server generates a Foreign Key constraint error because the referenced Parent Key does not exist.
+
+---
+
+# 15. IMPORTANT POINTS TO REMEMBER
+
+| Constraint / Operation | Purpose |
+|---|---|
+| PRIMARY KEY | Uniquely identifies records |
+| FOREIGN KEY | Establishes table relationships |
+| ON UPDATE CASCADE | Automatically updates related child values |
+| ON DELETE CASCADE | Automatically deletes related child records |
+| INSERT | Adds new records |
+| UPDATE | Modifies existing records |
+| DELETE | Removes records |
+| DROP TABLE | Removes the table structure and data |
+
+---
+
+# 16. CONCLUSION
+
+Primary Key and Foreign Key constraints are essential concepts in SQL database management.
+
+- Primary Key uniquely identifies each record.
+- Foreign Key establishes relationships between tables.
+- Parent Table stores the referenced key.
+- Child Table stores the Foreign Key.
+- ON UPDATE CASCADE maintains relationships when key values change.
+- ON DELETE CASCADE automatically removes related child records.
+
+Understanding these concepts helps database developers maintain data integrity, consistency, and proper relationships between tables.
+
+**Practice these SQL queries regularly to improve your database skills and prepare for SQL interviews.**
