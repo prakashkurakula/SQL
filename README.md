@@ -3471,3 +3471,573 @@ Primary Key and Foreign Key constraints are essential concepts in SQL database m
 Understanding these concepts helps database developers maintain data integrity, consistency, and proper relationships between tables.
 
 **Practice these SQL queries regularly to improve your database skills and prepare for SQL interviews.**
+
+#SQL
+
+# SQL – TCL (Transaction Control Language)
+
+## 1. Introduction to TCL
+
+**TCL (Transaction Control Language)** is a category of SQL commands used to manage transactions in a database.
+
+A transaction is a group of SQL statements that are executed as a single logical unit of work.
+
+TCL commands help us control database changes by saving them permanently or cancelling them when necessary.
+
+### Why do we use TCL?
+
+- To maintain database consistency.
+- To save changes permanently.
+- To undo unwanted changes.
+- To manage multiple SQL operations as one transaction.
+- To maintain data integrity.
+- To recover from errors during database operations.
+
+### Main TCL Commands
+
+| Command | Description |
+|---|---|
+| BEGIN TRANSACTION | Starts a transaction. |
+| COMMIT | Permanently saves transaction changes. |
+| ROLLBACK | Cancels transaction changes. |
+| SAVE TRANSACTION | Creates a savepoint inside a transaction. |
+
+---
+
+# 2. BEGIN TRANSACTION
+
+### Definition
+
+`BEGIN TRANSACTION` is used to start a new transaction in a database.
+
+After starting a transaction, we can perform multiple operations such as INSERT, UPDATE, and DELETE.
+
+The changes can be permanently saved using COMMIT or cancelled using ROLLBACK.
+
+### Syntax
+
+```sql
+BEGIN TRANSACTION;
+
+-- SQL statements
+
+COMMIT;
+```
+
+### Example
+
+```sql
+CREATE TABLE CITY_WORKERS
+(
+    WORKER_ID INT,
+    WORKER_NAME CHAR(10),
+    WORKER_SALARY MONEY
+);
+
+BEGIN TRANSACTION;
+
+INSERT INTO CITY_WORKERS
+VALUES (1, 'JHON', 1200);
+
+COMMIT;
+```
+
+### Explanation
+
+1. `CREATE TABLE` creates a new table.
+2. `BEGIN TRANSACTION` starts a transaction.
+3. `INSERT INTO` inserts a new employee record.
+4. `COMMIT` permanently saves the inserted record.
+
+### Check the Output
+
+```sql
+SELECT * FROM CITY_WORKERS;
+```
+
+| WORKER_ID | WORKER_NAME | WORKER_SALARY |
+|---|---|---|
+| 1 | JHON | 1200.00 |
+
+### Real-Time Scenario
+
+Imagine an organization adding a new employee to its database.
+
+The organization wants to make sure that the employee details are saved together as part of a transaction.
+
+If everything is correct, the transaction is committed.
+
+---
+
+# 3. COMMIT
+
+### Definition
+
+`COMMIT` is used to permanently save all changes made during the current transaction.
+
+After executing COMMIT, the transaction is completed, and its changes cannot be undone using a normal ROLLBACK.
+
+### Syntax
+
+```sql
+BEGIN TRANSACTION;
+
+INSERT INTO table_name
+VALUES (value1, value2);
+
+COMMIT;
+```
+
+### Example
+
+```sql
+BEGIN TRANSACTION;
+
+INSERT INTO CITY_WORKERS
+VALUES (2, 'PETER', 1900);
+
+COMMIT;
+```
+
+### Explanation
+
+1. A transaction is started.
+2. A new worker record is inserted.
+3. COMMIT permanently saves the inserted record.
+
+### Check the Output
+
+```sql
+SELECT * FROM CITY_WORKERS;
+```
+
+| WORKER_ID | WORKER_NAME | WORKER_SALARY |
+|---|---|---|
+| 1 | JHON | 1200.00 |
+| 2 | PETER | 1900.00 |
+
+### Real-Time Scenario
+
+Consider an online shopping application.
+
+A customer places an order and completes the payment.
+
+The application updates the order and payment details. When all required operations succeed, the transaction is committed.
+
+**Important:** COMMIT makes the transaction changes permanent.
+
+---
+
+# 4. ROLLBACK
+
+### Definition
+
+`ROLLBACK` is used to cancel the changes made during an active transaction.
+
+It restores the database to its state before the transaction started, or to the latest savepoint when a savepoint is specified.
+
+### Syntax
+
+```sql
+BEGIN TRANSACTION;
+
+-- SQL statements
+
+ROLLBACK;
+```
+
+### Example
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE CITY_WORKERS
+SET WORKER_SALARY = 1500
+WHERE WORKER_SALARY = 1200;
+
+ROLLBACK;
+```
+
+### Explanation
+
+1. A transaction is started.
+2. The salary of JHON is updated from 1200 to 1500.
+3. ROLLBACK cancels the uncommitted update.
+4. The original salary remains 1200.
+
+### Check the Output
+
+```sql
+SELECT * FROM CITY_WORKERS;
+```
+
+| WORKER_ID | WORKER_NAME | WORKER_SALARY |
+|---|---|---|
+| 1 | JHON | 1200.00 |
+| 2 | PETER | 1900.00 |
+
+### Real-Time Scenario
+
+Imagine an employee's salary is accidentally updated.
+
+The administrator notices the mistake before saving the transaction.
+
+Using ROLLBACK, the administrator can cancel the update and retain the original salary.
+
+### Important Points
+
+- ROLLBACK cancels uncommitted changes.
+- It cannot normally undo changes after COMMIT.
+- It can roll back an entire active transaction.
+- It can also roll back to a specific savepoint.
+
+---
+
+# 5. SAVE TRANSACTION (SAVEPOINT)
+
+### Definition
+
+`SAVE TRANSACTION` is used to create a savepoint inside an active transaction.
+
+A savepoint acts as a temporary checkpoint.
+
+It allows us to roll back selected operations without cancelling the entire transaction.
+
+In SQL Server, the command is called `SAVE TRANSACTION`.
+
+### Syntax
+
+```sql
+BEGIN TRANSACTION;
+
+-- First operation
+
+SAVE TRANSACTION savepoint_name;
+
+-- Additional operations
+
+ROLLBACK TRANSACTION savepoint_name;
+```
+
+### Example
+
+```sql
+CREATE TABLE VIHARATECH
+(
+    STDID INT,
+    STDNAME CHAR(10),
+    STDAGE TINYINT
+);
+```
+
+### Insert Records
+
+```sql
+BEGIN TRANSACTION;
+
+INSERT INTO VIHARATECH
+VALUES (1, 'SRINU', 23);
+
+INSERT INTO VIHARATECH
+VALUES (2, 'PRAVEEN', 24);
+
+INSERT INTO VIHARATECH
+VALUES (3, 'HASAN', 20);
+
+INSERT INTO VIHARATECH
+VALUES (4, 'LAILA', 19);
+
+INSERT INTO VIHARATECH
+VALUES (5, 'LILLY', 25);
+
+COMMIT;
+```
+
+### Check the Records
+
+```sql
+SELECT * FROM VIHARATECH;
+```
+
+| STDID | STDNAME | STDAGE |
+|---|---|---|
+| 1 | SRINU | 23 |
+| 2 | PRAVEEN | 24 |
+| 3 | HASAN | 20 |
+| 4 | LAILA | 19 |
+| 5 | LILLY | 25 |
+
+### Example: Using SAVE TRANSACTION
+
+```sql
+BEGIN TRANSACTION;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 1;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 2;
+
+SAVE TRANSACTION P1;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 5;
+
+ROLLBACK TRANSACTION P1;
+```
+
+### Explanation
+
+1. BEGIN TRANSACTION starts a transaction.
+2. The record with STDID 1 is deleted.
+3. The record with STDID 2 is deleted.
+4. SAVE TRANSACTION P1 creates a savepoint.
+5. The record with STDID 5 is deleted.
+6. ROLLBACK TRANSACTION P1 cancels the changes made after the savepoint.
+
+### Expected Output
+
+```sql
+SELECT * FROM VIHARATECH;
+```
+
+| STDID | STDNAME | STDAGE |
+|---|---|---|
+| 3 | HASAN | 20 |
+| 4 | LAILA | 19 |
+
+**Important:** The deletions of STDID 1 and 2 remain part of the active transaction. The deletion of STDID 5 is undone.
+
+To make the remaining changes permanent, execute:
+
+```sql
+COMMIT;
+```
+
+### Real-Time Scenario
+
+Imagine a college database containing 100 student records.
+
+An administrator wants to delete some unwanted records.
+
+After deleting the first few records, the administrator creates a savepoint.
+
+If another deletion is incorrect, the administrator can roll back to the savepoint without cancelling the earlier deletions.
+
+---
+
+# 6. Difference Between COMMIT, ROLLBACK, and SAVE TRANSACTION
+
+| Feature | COMMIT | ROLLBACK | SAVE TRANSACTION |
+|---|---|---|---|
+| Purpose | Saves changes | Cancels changes | Creates a checkpoint |
+| Permanently saves data | Yes | No | No |
+| Undo changes | No | Yes | Allows partial rollback |
+| Transaction status | Completes transaction | Completes transaction when used without a savepoint | Transaction remains active |
+| Usage | After successful operations | When errors occur | Before additional operations |
+
+---
+
+# 7. Practical Scenario-Based Examples
+
+## Scenario 1: Employee Salary Update
+
+**Requirement:** Increase an employee's salary from 1200 to 1500 and save the changes.
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE CITY_WORKERS
+SET WORKER_SALARY = 1500
+WHERE WORKER_ID = 1;
+
+COMMIT;
+
+SELECT * FROM CITY_WORKERS;
+```
+
+**Result:** The updated salary is permanently saved.
+
+## Scenario 2: Incorrect Salary Update
+
+**Requirement:** Update the salary but cancel the changes because the amount is incorrect.
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE CITY_WORKERS
+SET WORKER_SALARY = 5000
+WHERE WORKER_ID = 1;
+
+ROLLBACK;
+
+SELECT * FROM CITY_WORKERS;
+```
+
+**Result:** The original salary is restored.
+
+## Scenario 3: Delete Selected Student Records
+
+**Requirement:** Delete two students, create a savepoint, delete another student, and undo only the last deletion.
+
+```sql
+BEGIN TRANSACTION;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 1;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 2;
+
+SAVE TRANSACTION P1;
+
+DELETE FROM VIHARATECH
+WHERE STDID = 5;
+
+ROLLBACK TRANSACTION P1;
+
+COMMIT;
+
+SELECT * FROM VIHARATECH;
+```
+
+**Result:** Students 1 and 2 are deleted permanently. Student 5 is restored.
+
+## Scenario 4: Bank Account Transfer
+
+**Requirement:** Transfer ₹5,000 from Account A to Account B.
+
+```sql
+BEGIN TRANSACTION;
+
+UPDATE BANK_ACCOUNT
+SET BALANCE = BALANCE - 5000
+WHERE ACCOUNT_ID = 101;
+
+UPDATE BANK_ACCOUNT
+SET BALANCE = BALANCE + 5000
+WHERE ACCOUNT_ID = 102;
+
+COMMIT;
+```
+
+**Explanation:**
+
+1. Start the transaction.
+2. Deduct ₹5,000 from Account A.
+3. Add ₹5,000 to Account B.
+4. Commit the transaction.
+
+**Result:** Both operations are saved together.
+
+**Important:** In a real banking application, additional validation is required to ensure sufficient balance, valid accounts, and successful updates before committing.
+
+---
+
+# 8. Important Rules of TCL
+
+1. BEGIN TRANSACTION starts a transaction.
+2. COMMIT saves all current transaction changes permanently.
+3. ROLLBACK cancels uncommitted changes.
+4. SAVE TRANSACTION creates a savepoint.
+5. ROLLBACK TRANSACTION savepoint_name rolls back to a savepoint.
+6. A savepoint does not permanently save data.
+7. COMMIT removes the transaction's savepoints.
+8. You cannot roll back a committed transaction using ordinary ROLLBACK.
+9. Multiple SQL statements can be included in one transaction.
+10. Transaction behavior can vary depending on the database management system.
+
+---
+
+# 9. Difference Between TCL and DML
+
+| TCL | DML |
+|---|---|
+| Transaction Control Language | Data Manipulation Language |
+| Controls database transactions | Manipulates table data |
+| Saves or cancels changes | Inserts, updates, and deletes records |
+| Commands include COMMIT and ROLLBACK | Commands include INSERT, UPDATE, DELETE |
+| Manages transaction consistency | Manages data modifications |
+
+---
+
+# 10. Interview Questions and Answers
+
+### Q1. What is TCL?
+
+**Answer:** TCL stands for Transaction Control Language. It is used to manage database transactions and control changes made by SQL statements.
+
+### Q2. What is a transaction?
+
+**Answer:** A transaction is a group of SQL statements treated as one logical unit of work.
+
+### Q3. What is COMMIT?
+
+**Answer:** COMMIT permanently saves all changes made during the current transaction.
+
+### Q4. What is ROLLBACK?
+
+**Answer:** ROLLBACK cancels uncommitted changes made during a transaction.
+
+### Q5. What is SAVE TRANSACTION?
+
+**Answer:** SAVE TRANSACTION creates a savepoint inside an active transaction. It allows us to roll back selected operations.
+
+### Q6. Can we ROLLBACK after COMMIT?
+
+**Answer:** No. Once a transaction is committed, ordinary ROLLBACK cannot undo those changes.
+
+### Q7. What is the difference between ROLLBACK and SAVE TRANSACTION?
+
+**Answer:** ROLLBACK cancels the entire active transaction when used without a savepoint. SAVE TRANSACTION creates a checkpoint that allows partial rollback.
+
+### Q8. Can we create multiple savepoints?
+
+**Answer:** Yes. SQL Server supports multiple savepoints within an active transaction. Savepoint names should be managed carefully.
+
+### Q9. What happens if we do not use COMMIT or ROLLBACK?
+
+**Answer:** The transaction may remain active until it is explicitly completed, the connection ends, or the database handles it according to its transaction settings.
+
+### Q10. Which TCL command is used to permanently save the data?
+
+**Answer:** COMMIT.
+
+---
+
+# 11. Important SQL Server Notes
+
+This practical file uses SQL Server syntax.
+
+- `BEGIN TRANSACTION` is used to start a transaction.
+- `COMMIT TRANSACTION` commits the transaction.
+- `ROLLBACK TRANSACTION` rolls back the transaction.
+- `SAVE TRANSACTION` creates a savepoint.
+- `ROLLBACK TRANSACTION P1` rolls back to savepoint P1.
+
+**Important difference:** SQL Server uses `SAVE TRANSACTION` instead of the `SAVEPOINT` keyword used by several other database systems.
+
+Also, `TRUNCATE TABLE` has special transaction behavior in SQL Server. It can be rolled back when executed inside an explicit transaction, unlike in some other DBMSs.
+
+---
+
+# 12. Conclusion
+
+TCL plays an important role in database management by controlling how changes are saved or cancelled.
+
+Understanding TCL is essential for working with real-time database applications such as banking systems, employee management systems, shopping applications, and student management systems.
+
+### Key Takeaways
+
+- BEGIN TRANSACTION – Starts a transaction.
+- COMMIT – Saves changes permanently.
+- ROLLBACK – Cancels uncommitted changes.
+- SAVE TRANSACTION – Creates a savepoint for partial rollback.
+
+**Practice these commands regularly to improve your SQL database management and interview skills.**
+
+---
+
+**Technology:** Microsoft SQL Server  
+**Language:** SQL  
+**Topic:** Transaction Control Language (TCL)
