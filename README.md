@@ -4041,3 +4041,842 @@ Understanding TCL is essential for working with real-time database applications 
 **Technology:** Microsoft SQL Server  
 **Language:** SQL  
 **Topic:** Transaction Control Language (TCL)
+
+#SQL
+
+# SQL RANKING OPERATIONS
+
+## 1. Introduction to Ranking Operations
+
+Ranking operations in SQL are used to assign a numerical position or rank to rows based on a specific column.
+
+Ranking functions are commonly used to:
+- Identify employees with the highest salaries.
+- Find the top-performing students.
+- Rank products based on sales.
+- Identify the highest and lowest values.
+- Rank records within different groups or departments.
+
+SQL provides three important ranking functions:
+
+1. `ROW_NUMBER()`
+2. `RANK()`
+3. `DENSE_RANK()`
+
+These are window functions that work with the `OVER()` clause.
+
+---
+
+## 2. Types of Ranking Operations
+
+Ranking operations can be classified into two types:
+
+### A. Row-wise Ranking
+
+Row-wise ranking assigns a ranking number to every row in the entire table based on a specified column.
+
+**Example:** Ranking all employees based on their salaries.
+
+### B. Group-wise Ranking
+
+Group-wise ranking assigns rankings separately within each group using the `PARTITION BY` clause.
+
+**Example:** Ranking employees separately within each department based on their salaries.
+
+---
+
+# PART 1: ROW-WISE RANKING
+
+## 3. Creating an Employee Table
+
+First, create an employee table to perform ranking operations.
+
+### SQL Query
+
+```sql
+CREATE TABLE EMPLOYEE
+(
+    EMPID INT,
+    EMPNAME CHAR(10),
+    EMPSALARY MONEY
+);
+```
+
+### Explanation
+
+| Column | Description |
+|---|---|
+| EMPID | Employee ID |
+| EMPNAME | Employee Name |
+| EMPSALARY | Employee Salary |
+
+### Insert Sample Records
+
+```sql
+INSERT INTO EMPLOYEE VALUES (1, 'JHON', 1200);
+INSERT INTO EMPLOYEE VALUES (2, 'PETER', 1500);
+INSERT INTO EMPLOYEE VALUES (3, 'MICHEAL', 1800);
+INSERT INTO EMPLOYEE VALUES (4, 'BRAD', 200);
+INSERT INTO EMPLOYEE VALUES (5, 'COAL', 1500);
+INSERT INTO EMPLOYEE VALUES (6, 'KIRAN', 850);
+INSERT INTO EMPLOYEE VALUES (7, 'KUMAR', 670);
+INSERT INTO EMPLOYEE VALUES (8, 'GAUTHAM', 990);
+INSERT INTO EMPLOYEE VALUES (9, 'STEVE', 1800);
+INSERT INTO EMPLOYEE VALUES (10, 'SMITH', 2200);
+```
+
+### Display Employee Records
+
+```sql
+SELECT * FROM EMPLOYEE;
+```
+
+---
+
+## 4. ROW_NUMBER() Function
+
+### Definition
+
+`ROW_NUMBER()` is a ranking function that assigns a unique sequential number to each row based on the specified ordering condition.
+
+Even when two or more employees have the same salary, `ROW_NUMBER()` assigns different numbers to them.
+
+### Syntax
+
+```sql
+SELECT COLUMN_NAME,
+       ROW_NUMBER() OVER (ORDER BY COLUMN_NAME ASC) AS RANKING
+FROM TABLE_NAME;
+```
+
+### Example: Rank Employees Based on Salary
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    ROW_NUMBER() OVER (ORDER BY EMPSALARY ASC) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `ROW_NUMBER()` assigns a unique number to each row.
+- `OVER()` defines the window for the ranking operation.
+- `ORDER BY EMPSALARY ASC` sorts salaries from lowest to highest.
+- `AS RANKING` gives a name to the calculated column.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 4 | BRAD | 200 | 1 |
+| 7 | KUMAR | 670 | 2 |
+| 6 | KIRAN | 850 | 3 |
+| 8 | GAUTHAM | 990 | 4 |
+| 1 | JHON | 1200 | 5 |
+| 2 | PETER | 1500 | 6 |
+| 5 | COAL | 1500 | 7 |
+| 3 | MICHEAL | 1800 | 8 |
+| 9 | STEVE | 1800 | 9 |
+| 10 | SMITH | 2200 | 10 |
+
+**Important Point:** `ROW_NUMBER()` always assigns a unique number to every row. For equal salaries, the order can be arbitrary unless an additional column is specified in `ORDER BY`.
+
+---
+
+## 5. RANK() Function
+
+### Definition
+
+`RANK()` is a ranking function that assigns the same rank to rows having equal values.
+
+However, when duplicate values occur, the next rank is skipped.
+
+### Syntax
+
+```sql
+SELECT COLUMN_NAME,
+       RANK() OVER (ORDER BY COLUMN_NAME ASC) AS RANKING
+FROM TABLE_NAME;
+```
+
+### Example: Rank Employees Based on Salary
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    RANK() OVER (ORDER BY EMPSALARY ASC) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `RANK()` assigns the same rank to employees with equal salaries.
+- If two employees receive the same rank, the next rank is skipped.
+- `ORDER BY EMPSALARY ASC` ranks employees from the lowest salary to the highest salary.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 4 | BRAD | 200 | 1 |
+| 7 | KUMAR | 670 | 2 |
+| 6 | KIRAN | 850 | 3 |
+| 8 | GAUTHAM | 990 | 4 |
+| 1 | JHON | 1200 | 5 |
+| 2 | PETER | 1500 | 6 |
+| 5 | COAL | 1500 | 6 |
+| 3 | MICHEAL | 1800 | 8 |
+| 9 | STEVE | 1800 | 8 |
+| 10 | SMITH | 2200 | 10 |
+
+**Important Point:** `RANK()` gives equal ranks to duplicate values and skips the next rank.
+
+For example, if two employees share rank 6, the next employee receives rank 8.
+
+---
+
+## 6. DENSE_RANK() Function
+
+### Definition
+
+`DENSE_RANK()` is a ranking function that assigns the same rank to rows having equal values without skipping the next rank.
+
+### Syntax
+
+```sql
+SELECT COLUMN_NAME,
+       DENSE_RANK() OVER (ORDER BY COLUMN_NAME ASC) AS RANKING
+FROM TABLE_NAME;
+```
+
+### Example: Rank Employees Based on Salary
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    DENSE_RANK() OVER (ORDER BY EMPSALARY DESC) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `DENSE_RANK()` assigns the same rank to employees with equal salaries.
+- It does not skip any rank.
+- `ORDER BY EMPSALARY DESC` ranks employees from the highest salary to the lowest salary.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 10 | SMITH | 2200 | 1 |
+| 3 | MICHEAL | 1800 | 2 |
+| 9 | STEVE | 1800 | 2 |
+| 2 | PETER | 1500 | 3 |
+| 5 | COAL | 1500 | 3 |
+| 1 | JHON | 1200 | 4 |
+| 8 | GAUTHAM | 990 | 5 |
+| 6 | KIRAN | 850 | 6 |
+| 7 | KUMAR | 670 | 7 |
+| 4 | BRAD | 200 | 8 |
+
+**Important Point:** `DENSE_RANK()` assigns equal ranks to duplicate values without skipping the next rank.
+
+---
+
+# PART 2: GROUP-WISE RANKING
+
+## 7. Introduction to PARTITION BY
+
+### Definition
+
+`PARTITION BY` is used inside the `OVER()` clause to divide records into separate groups.
+
+Ranking functions are then applied independently within each group.
+
+**Example:** If an employee table contains three departments, employees are ranked separately within each department.
+
+### Syntax
+
+```sql
+SELECT
+    COLUMN_NAME,
+    RANKING_FUNCTION() OVER
+    (
+        PARTITION BY GROUP_COLUMN
+        ORDER BY COLUMN_NAME DESC
+    ) AS RANKING
+FROM TABLE_NAME;
+```
+
+### Important Points
+
+- `PARTITION BY` divides records into groups.
+- `ORDER BY` determines the ranking order within each group.
+- Ranking starts again from 1 for every new group.
+- Each group receives an independent ranking.
+
+---
+
+## 8. Inserting Group-wise Employee Records
+
+For this example, EMPID represents the department or group ID.
+
+### SQL Queries
+
+```sql
+INSERT INTO EMPLOYEE VALUES (1, 'JHON', 1200);
+INSERT INTO EMPLOYEE VALUES (1, 'JANES', 1400);
+INSERT INTO EMPLOYEE VALUES (1, 'JACKSON', 1200);
+INSERT INTO EMPLOYEE VALUES (1, 'PRIYA', 1300);
+INSERT INTO EMPLOYEE VALUES (1, 'KAVITHA', 2000);
+
+INSERT INTO EMPLOYEE VALUES (2, 'MIKE', 100);
+INSERT INTO EMPLOYEE VALUES (2, 'MICHEAL', 200);
+INSERT INTO EMPLOYEE VALUES (2, 'KIRAN', 400);
+INSERT INTO EMPLOYEE VALUES (2, 'KUMAR', 200);
+INSERT INTO EMPLOYEE VALUES (2, 'KRISHNA', 300);
+
+INSERT INTO EMPLOYEE VALUES (3, 'PRASANA', 3200);
+INSERT INTO EMPLOYEE VALUES (3, 'PAVAN', 4800);
+```
+
+### Display Records
+
+```sql
+SELECT * FROM EMPLOYEE;
+```
+
+---
+
+## 9. ROW_NUMBER() With PARTITION BY
+
+### Definition
+
+`ROW_NUMBER()` with `PARTITION BY` assigns unique sequential numbers separately within each group.
+
+### Syntax
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Example Query
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    ROW_NUMBER() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `PARTITION BY EMPID` separates employees into different groups.
+- `ORDER BY EMPSALARY DESC` sorts employees based on the highest salary.
+- `ROW_NUMBER()` assigns unique numbers within each group.
+- Ranking starts again from 1 for every group.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 1 | KAVITHA | 2000 | 1 |
+| 1 | JANES | 1400 | 2 |
+| 1 | PRIYA | 1300 | 3 |
+| 1 | JHON | 1200 | 4 |
+| 1 | JACKSON | 1200 | 5 |
+| 2 | KIRAN | 400 | 1 |
+| 2 | KRISHNA | 300 | 2 |
+| 2 | MICHEAL | 200 | 3 |
+| 2 | KUMAR | 200 | 4 |
+| 2 | MIKE | 100 | 5 |
+| 3 | PAVAN | 4800 | 1 |
+| 3 | PRASANA | 3200 | 2 |
+
+**Important Point:** Every group starts ranking from 1, even when the previous group has already completed its ranking.
+
+---
+
+## 10. RANK() With PARTITION BY
+
+### Definition
+
+`RANK()` with `PARTITION BY` assigns the same rank to employees having equal salaries within the same group.
+
+It skips the next rank when duplicate values occur.
+
+### Syntax
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    RANK() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Example Query
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    RANK() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `PARTITION BY EMPID` divides employees into groups.
+- `ORDER BY EMPSALARY DESC` sorts salaries from highest to lowest.
+- `RANK()` assigns equal ranks to duplicate salaries.
+- The next rank is skipped when duplicate salaries occur.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 1 | KAVITHA | 2000 | 1 |
+| 1 | JANES | 1400 | 2 |
+| 1 | PRIYA | 1300 | 3 |
+| 1 | JHON | 1200 | 4 |
+| 1 | JACKSON | 1200 | 4 |
+| 2 | KIRAN | 400 | 1 |
+| 2 | KRISHNA | 300 | 2 |
+| 2 | MICHEAL | 200 | 3 |
+| 2 | KUMAR | 200 | 3 |
+| 2 | MIKE | 100 | 5 |
+| 3 | PAVAN | 4800 | 1 |
+| 3 | PRASANA | 3200 | 2 |
+
+**Important Point:** Equal salaries receive equal ranks, and the next rank is skipped within the same group.
+
+---
+
+## 11. DENSE_RANK() With PARTITION BY
+
+### Definition
+
+`DENSE_RANK()` with `PARTITION BY` assigns the same rank to employees having equal salaries within each group without skipping the next rank.
+
+### Syntax
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    DENSE_RANK() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Example Query
+
+```sql
+SELECT
+    EMPID,
+    EMPNAME,
+    EMPSALARY,
+    DENSE_RANK() OVER
+    (
+        PARTITION BY EMPID
+        ORDER BY EMPSALARY DESC
+    ) AS RANKING
+FROM EMPLOYEE;
+```
+
+### Explanation
+
+- `PARTITION BY EMPID` separates employees into different groups.
+- `ORDER BY EMPSALARY DESC` sorts salaries from highest to lowest.
+- `DENSE_RANK()` gives the same rank to duplicate salaries.
+- The next rank is not skipped.
+
+### Expected Output
+
+| EMPID | EMPNAME | EMPSALARY | RANKING |
+|---|---|---:|---:|
+| 1 | KAVITHA | 2000 | 1 |
+| 1 | JANES | 1400 | 2 |
+| 1 | PRIYA | 1300 | 3 |
+| 1 | JHON | 1200 | 4 |
+| 1 | JACKSON | 1200 | 4 |
+| 2 | KIRAN | 400 | 1 |
+| 2 | KRISHNA | 300 | 2 |
+| 2 | MICHEAL | 200 | 3 |
+| 2 | KUMAR | 200 | 3 |
+| 2 | MIKE | 100 | 4 |
+| 3 | PAVAN | 4800 | 1 |
+| 3 | PRASANA | 3200 | 2 |
+
+**Important Point:** `DENSE_RANK()` gives equal ranks for duplicate salaries without skipping any subsequent rank.
+
+---
+
+# PART 3: DIFFERENCE BETWEEN RANKING FUNCTIONS
+
+## 12. ROW_NUMBER() vs RANK() vs DENSE_RANK()
+
+| Feature | ROW_NUMBER() | RANK() | DENSE_RANK() |
+|---|---|---|---|
+| Unique ranking | Yes | No | No |
+| Same rank for duplicate values | No | Yes | Yes |
+| Skips next rank | No | Yes | No |
+| Supports OVER() | Yes | Yes | Yes |
+| Supports PARTITION BY | Yes | Yes | Yes |
+
+### Simple Example
+
+Consider the following salary values:
+
+| Employee | Salary |
+|---|---:|
+| A | 5000 |
+| B | 4000 |
+| C | 4000 |
+| D | 3000 |
+| E | 2000 |
+
+**ROW_NUMBER() Output**
+
+| Employee | Salary | Rank |
+|---|---:|---:|
+| A | 5000 | 1 |
+| B | 4000 | 2 |
+| C | 4000 | 3 |
+| D | 3000 | 4 |
+| E | 2000 | 5 |
+
+**RANK() Output**
+
+| Employee | Salary | Rank |
+|---|---:|---:|
+| A | 5000 | 1 |
+| B | 4000 | 2 |
+| C | 4000 | 2 |
+| D | 3000 | 4 |
+| E | 2000 | 5 |
+
+**DENSE_RANK() Output**
+
+| Employee | Salary | Rank |
+|---|---:|---:|
+| A | 5000 | 1 |
+| B | 4000 | 2 |
+| C | 4000 | 2 |
+| D | 3000 | 3 |
+| E | 2000 | 4 |
+
+---
+
+# PART 4: SCENARIO-BASED EXAMPLES
+
+## 13. Scenario 1: Find the Highest-Paid Employee
+
+**Requirement:** A company wants to identify the employee receiving the highest salary.
+
+### SQL Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        EMPID,
+        EMPNAME,
+        EMPSALARY,
+        RANK() OVER (ORDER BY EMPSALARY DESC) AS RANKING
+    FROM EMPLOYEE
+) AS RESULT
+WHERE RANKING = 1;
+```
+
+**Explanation:** `RANK()` assigns rank 1 to the highest salary. The outer query filters employees whose rank is 1.
+
+## 14. Scenario 2: Find the Top 3 Employees Based on Salary
+
+**Requirement:** The HR department wants to identify the top three employees based on salary, including employees with equal salaries at the third rank.
+
+### SQL Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        EMPID,
+        EMPNAME,
+        EMPSALARY,
+        RANK() OVER (ORDER BY EMPSALARY DESC) AS RANKING
+    FROM EMPLOYEE
+) AS RESULT
+WHERE RANKING <= 3;
+```
+
+**Explanation:** `RANK()` gives the same rank to employees with equal salaries. Filtering by rank 3 includes ties at the third position.
+
+## 15. Scenario 3: Find the Second-Highest Distinct Salary
+
+**Requirement:** A company wants to find the second-highest distinct salary.
+
+### SQL Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        EMPID,
+        EMPNAME,
+        EMPSALARY,
+        DENSE_RANK() OVER (ORDER BY EMPSALARY DESC) AS RANKING
+    FROM EMPLOYEE
+) AS RESULT
+WHERE RANKING = 2;
+```
+
+**Explanation:** `DENSE_RANK()` assigns ranks based on distinct salary values. Rank 2 represents the second-highest distinct salary.
+
+## 16. Scenario 4: Find the Highest-Paid Employee in Each Group
+
+**Requirement:** A company wants to identify the highest-paid employee separately within every department.
+
+### SQL Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        EMPID,
+        EMPNAME,
+        EMPSALARY,
+        ROW_NUMBER() OVER
+        (
+            PARTITION BY EMPID
+            ORDER BY EMPSALARY DESC
+        ) AS RANKING
+    FROM EMPLOYEE
+) AS RESULT
+WHERE RANKING = 1;
+```
+
+**Explanation:** `PARTITION BY EMPID` separates employees into groups. `ROW_NUMBER()` identifies the first employee in each group.
+
+## 17. Scenario 5: Find the Second-Highest Salary in Each Group
+
+**Requirement:** A company wants to identify the second-highest distinct salary in every department.
+
+### SQL Query
+
+```sql
+SELECT *
+FROM
+(
+    SELECT
+        EMPID,
+        EMPNAME,
+        EMPSALARY,
+        DENSE_RANK() OVER
+        (
+            PARTITION BY EMPID
+            ORDER BY EMPSALARY DESC
+        ) AS RANKING
+    FROM EMPLOYEE
+) AS RESULT
+WHERE RANKING = 2;
+```
+
+**Explanation:** `DENSE_RANK()` calculates distinct salary ranks separately within each group. Rank 2 identifies the second-highest distinct salary.
+
+## 18. Scenario 6: Find Employees With Duplicate Salaries
+
+**Requirement:** The HR department wants to identify employees who receive the same salary.
+
+### SQL Query
+
+```sql
+SELECT
+    EMPSALARY,
+    COUNT(*) AS EMPLOYEE_COUNT
+FROM EMPLOYEE
+GROUP BY EMPSALARY
+HAVING COUNT(*) > 1;
+```
+
+**Explanation:** `GROUP BY` groups employees by salary, and `HAVING COUNT(*) > 1` displays salaries received by multiple employees.
+
+---
+
+# PART 5: IMPORTANT SQL CONCEPTS
+
+## 19. OVER() Clause
+
+**Definition:** The `OVER()` clause defines the window of rows on which a ranking or other window function operates.
+
+### Syntax
+
+```sql
+FUNCTION_NAME() OVER
+(
+    ORDER BY COLUMN_NAME
+)
+```
+
+Example:
+
+```sql
+SELECT
+    EMPNAME,
+    EMPSALARY,
+    ROW_NUMBER() OVER (ORDER BY EMPSALARY DESC) AS RANKING
+FROM EMPLOYEE;
+```
+
+## 20. ORDER BY Clause
+
+**Definition:** `ORDER BY` arranges the rows based on a specified column in ascending or descending order.
+
+### Syntax
+
+```sql
+SELECT *
+FROM TABLE_NAME
+ORDER BY COLUMN_NAME ASC;
+```
+
+- `ASC`: Ascending order (smallest to largest).
+- `DESC`: Descending order (largest to smallest).
+
+## 21. PARTITION BY Clause
+
+**Definition:** `PARTITION BY` divides rows into separate groups for window-function calculations without combining or removing individual rows.
+
+### Syntax
+
+```sql
+FUNCTION_NAME() OVER
+(
+    PARTITION BY GROUP_COLUMN
+    ORDER BY COLUMN_NAME DESC
+)
+```
+
+---
+
+# PART 6: INTERVIEW QUESTIONS AND ANSWERS
+
+### Q1. What are ranking functions in SQL?
+
+**Answer:** Ranking functions are window functions used to assign numerical positions to rows based on specified ordering conditions.
+
+### Q2. What are the three main ranking functions?
+
+**Answer:**
+1. ROW_NUMBER()
+2. RANK()
+3. DENSE_RANK()
+
+### Q3. What is the difference between RANK() and DENSE_RANK()?
+
+**Answer:** Both functions assign the same rank to duplicate values. However, `RANK()` skips the next rank, whereas `DENSE_RANK()` does not skip any rank.
+
+### Q4. Does ROW_NUMBER() assign duplicate ranks?
+
+**Answer:** No. `ROW_NUMBER()` always assigns a unique sequential number to each row.
+
+### Q5. What is the purpose of PARTITION BY?
+
+**Answer:** `PARTITION BY` divides records into groups and performs ranking separately within each group.
+
+### Q6. What is the difference between ORDER BY and PARTITION BY?
+
+**Answer:**
+- `ORDER BY` determines the sorting and ranking order.
+- `PARTITION BY` divides records into separate groups.
+
+### Q7. Can we use ranking functions without PARTITION BY?
+
+**Answer:** Yes. Without `PARTITION BY`, ranking functions operate over the entire result set.
+
+### Q8. Can we find the second-highest salary using DENSE_RANK()?
+
+**Answer:** Yes. Use `DENSE_RANK()` with descending salary order and filter the result where rank equals 2.
+
+### Q9. Which ranking function is useful for finding the top three distinct salaries?
+
+**Answer:** `DENSE_RANK()` is useful because it assigns ranks to distinct salary values without skipping ranks.
+
+### Q10. Do ranking functions change the original table?
+
+**Answer:** No. Ranking functions calculate ranking values in the query result. They do not modify the original table.
+
+---
+
+# PART 7: IMPORTANT POINTS TO REMEMBER
+
+1. Ranking functions are window functions.
+2. Ranking functions use the `OVER()` clause.
+3. `ROW_NUMBER()` assigns unique sequential numbers.
+4. `RANK()` assigns the same rank to duplicate values and skips subsequent ranks.
+5. `DENSE_RANK()` assigns the same rank to duplicate values without skipping ranks.
+6. `PARTITION BY` is used for group-wise ranking.
+7. `ORDER BY ASC` sorts values from lowest to highest.
+8. `ORDER BY DESC` sorts values from highest to lowest.
+9. Ranking functions do not modify the original table.
+10. Use an additional unique column in `ORDER BY` when deterministic row numbering is required.
+
+---
+
+# CONCLUSION
+
+SQL Ranking Operations are important for data analysis, reporting, and database management.
+
+The three major ranking functions — `ROW_NUMBER()`, `RANK()`, and `DENSE_RANK()` — help assign rankings to records based on specified conditions.
+
+**Key Takeaways:**
+
+- Use `ROW_NUMBER()` when every row needs a unique number.
+- Use `RANK()` when duplicate values should receive the same rank and subsequent ranks should be skipped.
+- Use `DENSE_RANK()` when duplicate values should receive the same rank without skipping subsequent ranks.
+- Use `PARTITION BY` when ranking records separately within different groups.
+
+**Technology:** Microsoft SQL Server (T-SQL)  
+**Topic:** SQL Ranking Operations  
+
