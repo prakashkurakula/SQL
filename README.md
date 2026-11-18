@@ -4880,3 +4880,570 @@ The three major ranking functions — `ROW_NUMBER()`, `RANK()`, and `DENSE_RANK(
 **Technology:** Microsoft SQL Server (T-SQL)  
 **Topic:** SQL Ranking Operations  
 
+#SQL
+
+# SQL CLAUSES OPERATIONS
+
+## 📌 Introduction
+
+SQL (Structured Query Language) provides different clauses to retrieve, filter, group, and manage data from database tables.
+
+**SQL Clauses** are keywords used in SQL queries to perform specific operations on data.
+
+In this practice, we will learn:
+
+1. GROUP BY Clause
+2. HAVING Clause
+3. Aggregate Functions
+   - COUNT()
+   - SUM()
+   - AVG()
+   - MIN()
+   - MAX()
+
+We will understand each clause with syntax, theoretical explanations, practical queries, and real-time business scenarios.
+
+---
+
+# 1. GROUP BY CLAUSE
+
+## 📖 Definition
+
+The `GROUP BY` clause is used to group rows that have the same values in one or more columns.
+
+It is mainly used with aggregate functions to perform calculations on each group.
+
+For example:
+- Calculate the total number of employees in each department.
+- Calculate the total salary of employees in each position.
+- Calculate the average salary of employees in each location.
+
+## Syntax
+
+```sql
+SELECT column_name, AGGREGATE_FUNCTION(column_name)
+FROM table_name
+GROUP BY column_name;
+```
+
+## Example Table: TCS_EMPLOYEES
+
+```sql
+CREATE TABLE TCS_EMPLOYEES
+(
+    EMPID INT,
+    EMP_LOCATION VARCHAR(20),
+    EMPNAME VARCHAR(20),
+    EMP_POSITION VARCHAR(20),
+    EMPSALARY MONEY
+);
+```
+
+## Insert Sample Records
+
+```sql
+INSERT INTO TCS_EMPLOYEES VALUES
+(1,'PUNE','JOHN','MANAGER',1200),
+(2,'BIHAR','PETER','TEAM LEADER',1000),
+(3,'NOIDA','HARRY','MODULE LEAD',1100),
+(4,'DELHI','MICHAEL','MANAGER',1500),
+(5,'BANGALORE','JOHNSON','TEAM LEADER',1150),
+(6,'ANDHRA','JAMES','MODULE LEAD',1300),
+(7,'HYDERABAD','SURYA','MANAGER',2000),
+(8,'TAMIL NADU','VIJAY','TEAM LEADER',1800),
+(9,'COIMBATORE','SIDDARTH','MANAGER',2500),
+(10,'MYSORE','KIRAN','MODULE LEAD',3000);
+```
+
+## Display Table Records
+
+```sql
+SELECT * FROM TCS_EMPLOYEES;
+```
+
+## Example 1: Count Employees by Position
+
+**Scenario:** A company wants to know how many employees are working in each position.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPS
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION;
+```
+
+**Explanation:**
+- `SELECT` retrieves the employee position.
+- `COUNT(*)` counts the number of employees.
+- `FROM` specifies the employee table.
+- `GROUP BY` groups employees according to their positions.
+
+## Example 2: Calculate Total Salary by Position
+
+**Scenario:** The HR department wants to calculate the total salary paid to employees in each position.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPS,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION;
+```
+
+**Explanation:**
+- `COUNT(*)` calculates the total employees in each position.
+- `SUM(EMPSALARY)` calculates the total salary for each position.
+- `GROUP BY EMP_POSITION` creates separate groups based on employee positions.
+
+## Example 3: Calculate Average Salary by Position
+
+**Scenario:** The HR department wants to identify the average salary paid to employees in each position.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPS,
+    SUM(EMPSALARY) AS TOTAL_SALARY,
+    AVG(EMPSALARY) AS AVG_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION;
+```
+
+**Explanation:**
+- `COUNT()` counts employees.
+- `SUM()` calculates the total salary.
+- `AVG()` calculates the average salary.
+- `GROUP BY` groups employees based on their positions.
+
+---
+
+# 2. HAVING CLAUSE
+
+## 📖 Definition
+
+The `HAVING` clause is used to filter grouped records based on a specified condition.
+
+It is mainly used with the `GROUP BY` clause and aggregate functions.
+
+**Important:** The `WHERE` clause filters individual rows, whereas the `HAVING` clause filters groups.
+
+## Syntax
+
+```sql
+SELECT column_name, AGGREGATE_FUNCTION(column_name)
+FROM table_name
+GROUP BY column_name
+HAVING condition;
+```
+
+## Example 1: Find Positions Having Total Salary Greater Than 6000
+
+**Scenario:** The company wants to identify employee positions where the total salary expenditure is greater than 6000.
+
+```sql
+SELECT
+    EMP_POSITION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING SUM(EMPSALARY) > 6000;
+```
+
+**Explanation:**
+- `GROUP BY EMP_POSITION` groups employees by position.
+- `SUM(EMPSALARY)` calculates the total salary for each group.
+- `HAVING SUM(EMPSALARY) > 6000` displays only groups with total salary greater than 6000.
+
+## Example 2: Find Positions Having More Than 3 Employees
+
+**Scenario:** HR wants to identify positions with more than three employees.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPLOYEES
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING COUNT(*) > 3;
+```
+
+**Explanation:**
+
+The query groups employees by position and displays only those positions where the employee count is greater than three.
+
+## Example 3: Find Positions with Average Salary Greater Than 1500
+
+**Scenario:** Management wants to identify positions where the average employee salary is greater than 1500.
+
+```sql
+SELECT
+    EMP_POSITION,
+    AVG(EMPSALARY) AS AVERAGE_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING AVG(EMPSALARY) > 1500;
+```
+
+---
+
+# 3. AGGREGATE FUNCTIONS
+
+## 📖 Definition
+
+Aggregate functions perform calculations on multiple rows and return a single result for each group or for the entire result set.
+
+They are commonly used with `GROUP BY` and `HAVING`.
+
+### 3.1 COUNT() Function
+
+**Definition:**
+
+The `COUNT()` function is used to count the number of rows or non-NULL values in a specified column.
+
+**Syntax:**
+
+```sql
+SELECT COUNT(column_name)
+FROM table_name;
+```
+
+**Example:**
+
+```sql
+SELECT COUNT(*) AS TOTAL_EMPLOYEES
+FROM TCS_EMPLOYEES;
+```
+
+**Scenario:** The HR department wants to calculate the total number of employees working in the company.
+
+**Important:**
+- `COUNT(*)` counts all rows.
+- `COUNT(column_name)` counts only non-NULL values in that column.
+- `COUNT(DISTINCT column_name)` counts unique non-NULL values.
+
+### 3.2 SUM() Function
+
+**Definition:**
+
+The `SUM()` function calculates the total of numeric values in a specified column.
+
+**Syntax:**
+
+```sql
+SELECT SUM(column_name)
+FROM table_name;
+```
+
+**Example:**
+
+```sql
+SELECT SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES;
+```
+
+**Scenario:** The finance department wants to calculate the total salary expenditure of the company.
+
+### 3.3 AVG() Function
+
+**Definition:**
+
+The `AVG()` function calculates the average value of a numeric column.
+
+**Syntax:**
+
+```sql
+SELECT AVG(column_name)
+FROM table_name;
+```
+
+**Example:**
+
+```sql
+SELECT AVG(EMPSALARY) AS AVERAGE_SALARY
+FROM TCS_EMPLOYEES;
+```
+
+**Scenario:** Management wants to calculate the average salary of all employees.
+
+### 3.4 MIN() Function
+
+**Definition:**
+
+The `MIN()` function returns the minimum value from a specified column.
+
+**Syntax:**
+
+```sql
+SELECT MIN(column_name)
+FROM table_name;
+```
+
+**Example:**
+
+```sql
+SELECT MIN(EMPSALARY) AS MINIMUM_SALARY
+FROM TCS_EMPLOYEES;
+```
+
+**Scenario:** HR wants to identify the lowest salary paid to an employee.
+
+### 3.5 MAX() Function
+
+**Definition:**
+
+The `MAX()` function returns the maximum value from a specified column.
+
+**Syntax:**
+
+```sql
+SELECT MAX(column_name)
+FROM TCS_EMPLOYEES;
+```
+
+**Example:**
+
+```sql
+SELECT MAX(EMPSALARY) AS MAXIMUM_SALARY
+FROM TCS_EMPLOYEES;
+```
+
+**Scenario:** HR wants to identify the highest salary paid to an employee.
+
+---
+
+# 4. DIFFERENCE BETWEEN WHERE AND HAVING
+
+Both `WHERE` and `HAVING` are used to filter data, but they work at different stages of query processing.
+
+| WHERE | HAVING |
+|---|---|
+| Filters individual rows. | Filters groups of rows. |
+| Used before GROUP BY. | Used after GROUP BY. |
+| Generally used with normal column conditions. | Commonly used with aggregate functions. |
+| Cannot directly use aggregate functions in its condition. | Can use aggregate functions in its condition. |
+| Filters records before grouping. | Filters grouped results. |
+
+## Example Using WHERE
+
+**Scenario:** Find employees whose salary is greater than 1500.
+
+```sql
+SELECT *
+FROM TCS_EMPLOYEES
+WHERE EMPSALARY > 1500;
+```
+
+## Example Using HAVING
+
+**Scenario:** Find positions whose total salary is greater than 3000.
+
+```sql
+SELECT
+    EMP_POSITION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING SUM(EMPSALARY) > 3000;
+```
+
+## Using WHERE and HAVING Together
+
+**Scenario:** Calculate the total salary for each position, considering only employees earning more than 1000, and display groups with total salary greater than 3000.
+
+```sql
+SELECT
+    EMP_POSITION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+WHERE EMPSALARY > 1000
+GROUP BY EMP_POSITION
+HAVING SUM(EMPSALARY) > 3000;
+```
+
+---
+
+# 5. SQL QUERY EXECUTION ORDER
+
+SQL queries are generally processed in the following logical order:
+
+1. FROM
+2. WHERE
+3. GROUP BY
+4. HAVING
+5. SELECT
+6. ORDER BY
+7. TOP / LIMIT (depending on database)
+
+**Example:**
+
+```sql
+SELECT
+    EMP_POSITION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+WHERE EMPSALARY > 1000
+GROUP BY EMP_POSITION
+HAVING SUM(EMPSALARY) > 3000
+ORDER BY TOTAL_SALARY DESC;
+```
+
+**Explanation:**
+
+- FROM: Selects the employee table.
+- WHERE: Filters employees earning more than 1000.
+- GROUP BY: Groups employees by position.
+- HAVING: Filters groups with total salary greater than 3000.
+- SELECT: Returns the requested columns and calculated values.
+- ORDER BY: Sorts the results in descending order.
+
+---
+
+# 6. REAL-TIME SCENARIO-BASED SQL QUERIES
+
+These examples demonstrate how SQL clauses are used in practical business situations.
+
+### Scenario 1: Find the total number of employees in each location.
+
+```sql
+SELECT
+    EMP_LOCATION,
+    COUNT(*) AS TOTAL_EMPLOYEES
+FROM TCS_EMPLOYEES
+GROUP BY EMP_LOCATION;
+```
+
+### Scenario 2: Find the total salary paid in each location.
+
+```sql
+SELECT
+    EMP_LOCATION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_LOCATION;
+```
+
+### Scenario 3: Find positions having more than 2 employees.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPLOYEES
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING COUNT(*) > 2;
+```
+
+### Scenario 4: Find the highest salary in each position.
+
+```sql
+SELECT
+    EMP_POSITION,
+    MAX(EMPSALARY) AS HIGHEST_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION;
+```
+
+### Scenario 5: Find positions having an average salary greater than 1500.
+
+```sql
+SELECT
+    EMP_POSITION,
+    AVG(EMPSALARY) AS AVG_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING AVG(EMPSALARY) > 1500;
+```
+
+### Scenario 6: Find the minimum and maximum salary in each position.
+
+```sql
+SELECT
+    EMP_POSITION,
+    MIN(EMPSALARY) AS MIN_SALARY,
+    MAX(EMPSALARY) AS MAX_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION;
+```
+
+### Scenario 7: Display positions where total salary is between 3000 and 6000.
+
+```sql
+SELECT
+    EMP_POSITION,
+    SUM(EMPSALARY) AS TOTAL_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING SUM(EMPSALARY) BETWEEN 3000 AND 6000;
+```
+
+### Scenario 8: Find positions where employee count is at least 3 and average salary is greater than 1200.
+
+```sql
+SELECT
+    EMP_POSITION,
+    COUNT(*) AS TOTAL_EMPLOYEES,
+    AVG(EMPSALARY) AS AVG_SALARY
+FROM TCS_EMPLOYEES
+GROUP BY EMP_POSITION
+HAVING COUNT(*) >= 3
+AND AVG(EMPSALARY) > 1200;
+```
+
+---
+
+# 7. IMPORTANT POINTS TO REMEMBER
+
+1. `GROUP BY` is used to group similar records.
+2. `HAVING` is used to filter grouped records.
+3. `WHERE` filters records before grouping.
+4. `COUNT()` counts rows or non-NULL values.
+5. `SUM()` calculates the total of numeric values.
+6. `AVG()` calculates the average of numeric values.
+7. `MIN()` returns the smallest value.
+8. `MAX()` returns the largest value.
+9. Aggregate functions are commonly used with `GROUP BY`.
+10. Every selected non-aggregated column generally needs to be included in the `GROUP BY` clause.
+11. `HAVING` can be used without `GROUP BY` in queries that filter an aggregate result over the entire table.
+
+---
+
+# 8. PRACTICE QUESTIONS
+
+Try to solve these questions independently using the TCS_EMPLOYEES table.
+
+1. Find the total number of employees in the company.
+2. Find the total salary of all employees.
+3. Find the average salary of all employees.
+4. Find the highest salary in the company.
+5. Find the lowest salary in the company.
+6. Find the total number of employees in each position.
+7. Find the total salary paid for each position.
+8. Find the average salary in each position.
+9. Find positions having more than 2 employees.
+10. Find positions having total salary greater than 5000.
+11. Find positions having average salary greater than 1500.
+12. Find the maximum salary in each location.
+13. Find locations having more than one employee.
+14. Find positions where total salary is between 3000 and 6000.
+15. Find positions having at least 2 employees and total salary greater than 3000.
+
+---
+
+# 9. CONCLUSION
+
+SQL clauses play an important role in data analysis and database management.
+
+- **GROUP BY:** Groups similar records.
+- **HAVING:** Filters grouped records.
+- **COUNT():** Counts records.
+- **SUM():** Calculates totals.
+- **AVG():** Calculates averages.
+- **MIN():** Finds minimum values.
+- **MAX():** Finds maximum values.
+- **WHERE:** Filters individual records.
+
+These concepts are very useful for SQL interviews, real-time projects, business reporting, and data analytics.
+
+**Learning Outcome:** After practising these SQL clauses and aggregate functions, we can group, filter, summarize, and analyse large amounts of data efficiently.
